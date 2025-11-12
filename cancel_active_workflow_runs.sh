@@ -35,6 +35,7 @@ for run_id in $run_ids; do
     continue
   fi
 
+  pending_job_name="${pending_job_name% / deploy}"
   if [[ $pending_job_name == $job_name_to_cancel ]]; then
     if gh run cancel $run_id; then
         echo "Cancelled workflow with run id $run_id"
