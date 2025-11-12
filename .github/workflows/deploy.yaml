@@ -31,4 +31,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Deploying to ${{ inputs.environment }}..."
-          gh run list -w deploy.yaml
+          gh run list -w main.yml
