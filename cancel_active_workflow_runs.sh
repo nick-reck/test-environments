@@ -4,7 +4,7 @@ ENV="$1"
 SERVICE="$2"
 REPO="nick-reck/test-environments"
 
-if [[ -z $ENV || -z $SERVICE ]]; then
+if [[ -z "$ENV" || -z "$SERVICE" ]]; then
   echo "Usage: $0 <env_to_check> <service>"
   exit 1
 fi
@@ -16,7 +16,7 @@ run_ids=$(gh api \
   "/repos/$REPO/actions/runs?status=waiting" \
   --jq '.workflow_runs[].id')
 
-if [ -z ${run_ids+x} ] || [ ${#run_ids[*]} -eq 0 ]; then
+if [ -z "${run_ids+x}" ] || [ ${#run_ids[*]} -eq 0 ]; then
   echo "No runs with status 'waiting' found."
   exit 0
 fi
@@ -30,7 +30,7 @@ for run_id in $run_ids; do
   pending_job_name=$(gh run view $run_id \
     --json jobs \
     -q '.jobs[] | select(.status == "waiting") | .name')
-  if [ -z $pending_job_name ]; then
+  if [ -z "$pending_job_name" ]; then
     echo "No jobs with status 'waiting' found."
     continue
   fi
