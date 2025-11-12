@@ -30,14 +30,18 @@ for run_id in $run_ids; do
   pending_job_name=$(gh run view $run_id \
     --json jobs \
     -q '.jobs[] | select(.status == "waiting") | .name')
+  if [ -z $pending_job_name ]; then
+    echo "No jobs with status 'waiting' found."
+    continue
+  fi
 
-  if [ $pending_job_name == $job_name_to_cancel ]; then
+  if [[ $pending_job_name == $job_name_to_cancel ]]; then
     if gh run cancel $run_id; then
         echo "Cancelled workflow with run id $run_id"
     else
         echo "Failed to cancel run id $run_id"
     fi
   else
-    echo "Skipping run id $run_id, since it isn't waiting for the service $SERVICE and environment $ENV"
+    echo "Skipping run id $run_id, since $pending_job_name isn't waiting for the service $SERVICE and environment $ENV"
   fi
 done
