@@ -11,6 +11,7 @@ jobs:
     with:
       environment: dev
       service: campaigns
+    secrets: inherit
 
   deploy-test:
     needs: deploy-dev
@@ -21,6 +22,7 @@ jobs:
     with:
       environment: test
       service: campaigns
+    secrets: inherit
 
   deploy-prod:
     needs: deploy-test
@@ -31,3 +33,4 @@ jobs:
     with:
       environment: prod
       service: campaigns
+    secrets: inherit
