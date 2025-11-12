@@ -16,7 +16,7 @@ run_ids=$(gh api \
   "/repos/$REPO/actions/runs?status=waiting" \
   --jq '.workflow_runs[].id')
 
-if [ -z $run_ids ]; then
+if [ -z ${run_ids+x} ] || [ ${#run_ids[*]} -eq 0 ]; then
   echo "No runs with status 'waiting' found."
   exit 0
 fi
