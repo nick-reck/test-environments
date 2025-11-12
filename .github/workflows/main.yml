@@ -6,6 +6,8 @@ jobs:
   deploy-dev:
     name: Deploy to dev
     uses: ./.github/workflows/deploy.yaml
+    permissions:
+      actions: write
     with:
       environment: dev
       service: campaigns
@@ -14,6 +16,8 @@ jobs:
     needs: deploy-dev
     name: Deploy to test
     uses: ./.github/workflows/deploy.yaml
+    permissions:
+      actions: write
     with:
       environment: test
       service: campaigns
@@ -22,6 +26,8 @@ jobs:
     needs: deploy-test
     name: Deploy to prod
     uses: ./.github/workflows/deploy.yaml
+    permissions:
+      actions: write
     with:
       environment: prod
       service: campaigns
