@@ -28,7 +28,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cancel pending deployments to ${{ inputs.environment }}
-        run: ./cancel_active_workflow_runs.sh
+        run: ./cancel_active_workflow_runs.sh ${{ inputs.environment }}
 
       - name: Fake deploy step
         env:

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-REPO="$1"
-ENV="$2"
+ENV="$1"
+REPO="nick-reck/test-environments"
 
-if [[ -z $REPO || -z $ENV ]]; then
-  echo "Usage: $0 <owner/repo> <env_to_check>"
+if [ -z $ENV ]; then
+  echo "Usage: $0 <env_to_check>"
   exit 1
 fi
 
