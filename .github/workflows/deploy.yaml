@@ -28,6 +28,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cancel pending deployments to ${{ inputs.environment }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./cancel_active_workflow_runs.sh ${{ inputs.environment }}
 
       - name: Fake deploy step
