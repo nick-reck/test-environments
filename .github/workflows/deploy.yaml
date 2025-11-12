@@ -18,6 +18,7 @@ env:
 
 jobs:
   deploy:
+    name: ${{ inputs.service }}-${{ inputs.environment }}
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
@@ -37,4 +38,3 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Deploying to ${{ inputs.environment }}..."
-          gh run list -w main.yml
