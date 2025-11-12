@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy-dev:
+    name: Deploy to dev
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: dev
+      service: campaigns
+
+  deploy-test:
+    needs: deploy-dev
+    name: Deploy to test
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: test
+      service: campaigns
+
+  deploy-prod:
+    needs: deploy-test
+    name: Deploy to prod
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: prod
+      service: campaigns

@@ -1,0 +1,30 @@
+name: Deploy step
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Github environment to deploy to"
+        type: string
+        required: true
+      service:
+        description: "Service to run CI on"
+        type: string
+        required: true
+
+env:
+  GOPRIVATE: "github.com/cfacorp,buf.cfadevelop.com/gen/go"
+  GOPROXY: "https://${{ secrets.ARTIFACTORY_USER }}:${{ secrets.ARTIFACTORY_TOKEN }}@cfa.jfrog.io/artifactory/api/go/go-customer"
+  GONOPROXY: none
+
+jobs:
+  deploy:
+    permissions:
+      actions: write
+    runs-on: ubuntu-latest
+    steps:
+        - name: Fake deploy step
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            echo "Deploying to ${{ inputs.environment }}..."
+            gh run list -w deploy.yaml
