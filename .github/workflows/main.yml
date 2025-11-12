@@ -4,7 +4,7 @@ on:
       - main
 jobs:
   deploy-dev:
-    name: Deploy to dev
+    name: campaigns-dev
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
@@ -15,7 +15,7 @@ jobs:
 
   deploy-test:
     needs: deploy-dev
-    name: Deploy to test
+    name: campaigns-test
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
@@ -26,7 +26,7 @@ jobs:
 
   deploy-prod:
     needs: deploy-test
-    name: Deploy to prod
+    name: campaigns-prod
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
