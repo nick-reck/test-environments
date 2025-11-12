@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 ENV="$1"
+SERVICE="$2"
 REPO="nick-reck/test-environments"
 
-if [ -z $ENV ]; then
-  echo "Usage: $0 <env_to_check>"
+if [[ -z $ENV || -z $SERVICE ]]; then
+  echo "Usage: $0 <env_to_check> <service>"
   exit 1
 fi
 
@@ -24,17 +25,19 @@ num_waiting_workflows=${#run_ids[*]}
 echo "$num_waiting_workflows runs with status 'waiting' found."
 echo "Checking pending deployments for each run..."
 
+job_name_to_cancel="$SERVICE-$ENV"
 for run_id in $run_ids; do
-  pending_env=$(gh api \
-    -H "Accept: application/vnd.github+json" \
-    "/repos/$REPO/actions/runs/$run_id/pending_deployments" \
-    --jq '.[].environment.name')
+  pending_job_name=$(gh run view $run_id \
+    --json jobs \
+    -q '.jobs[] | select(.status == "waiting") | .name')
 
-  if [ $pending_env == $ENV ]; then
+  if [ $pending_job_name == $job_name_to_cancel ]; then
     if gh run cancel $run_id; then
         echo "Cancelled workflow with run id $run_id"
     else
         echo "Failed to cancel run id $run_id"
     fi
+  else
+    echo "Skipping run id $run_id, since it isn't waiting for the service $SERVICE and environment $ENV"
   fi
 done
