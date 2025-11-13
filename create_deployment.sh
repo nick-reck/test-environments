@@ -54,7 +54,7 @@ for previous_deployment_id in $previous_deployment_ids; do
         -H "Accept: application/vnd.github+json" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         /repos/$REPO/deployments/$previous_deployment_id/statuses | jq -r '.[0].state')
-    if [[ "$current_state" == "success" ]]; then
+    if [[ "$current_state" != "inactive" ]]; then
         update_deployment_status $previous_deployment_id "inactive"
     else
         echo "Deployment $previous_deployment_id is in state $current_state, not updating it."
