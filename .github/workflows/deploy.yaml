@@ -39,7 +39,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Deploying to ${{ inputs.environment }}..."
+          echo "Deploying version ${{ inputs.image_tag }} to ${{ inputs.environment }}..."
 
   create:
     needs: deploy
