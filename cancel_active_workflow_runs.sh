@@ -26,7 +26,7 @@ num_waiting_workflows=${#run_ids[*]}
 echo "$num_waiting_workflows runs with status 'waiting' found."
 echo "Checking pending deployments for each run..."
 
-current_run_created_at=$(gh run view $run_id \
+current_run_created_at=$(gh run view $CURRENT_RUN_ID \
   --json createdAt \
   -q '.createdAt')
 # current_run_created_at_timestamp=$(date -juf "%Y-%m-%dT%H:%M:%SZ" "$current_run_created_at" +%s)
