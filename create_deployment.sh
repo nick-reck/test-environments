@@ -33,13 +33,8 @@ deployment_id=$(gh api --method POST \
     -H "Accept: application/vnd.github+json" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     /repos/$REPO/deployments \
-    --input payload.json | jq -r '.id')
-if [ -z "$deployment_id" ]; then
-    echo "Created deployment $deployment_id for $SERVICE with tag $TAG in $ENV"
-else
-    echo "Failed to create deployment for $SERVICE with tag $TAG in $ENV"
-    exit 1
-fi
+    --input payload.json | jq '.id')
+echo "Created deployment $deployment_id for $SERVICE with tag $TAG in $ENV"
 
 update_deployment_status $deployment_id "success"
 
