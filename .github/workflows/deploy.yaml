@@ -42,8 +42,15 @@ jobs:
           echo "Deploying to ${{ inputs.environment }}..."
 
   create:
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout latest
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create deployment to ${{ inputs.environment }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
