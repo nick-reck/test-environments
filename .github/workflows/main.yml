@@ -22,10 +22,10 @@ jobs:
       - name: Version bump
         id: version_bump
         run: |
-          if previous_version=$(git describe --tags --abbrev=0 --match="campaigns/*"); then
+          if previous_version=$(git describe --tags --abbrev=0 --match="audience/*"); then
             version=$(./version.sh "$previous_version" "${{ github.event.head_commit.message }}")
           else
-            version="campaigns/0.0.1"
+            version="audience/0.0.1"
           fi
           git tag "$version"
           git push origin "$version"
@@ -33,39 +33,39 @@ jobs:
 
   deploy-dev:
     needs: bump-version
-    name: campaigns-dev
+    name: audience-dev
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
       deployments: write
     with:
       environment: dev
-      service: campaigns
+      service: audience
       image_tag: ${{ needs.bump-version.outputs.version }}
     secrets: inherit
 
   deploy-test:
     needs: [bump-version, deploy-dev]
-    name: campaigns-test
+    name: audience-test
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
       deployments: write
     with:
       environment: test
-      service: campaigns
+      service: audience
       image_tag: ${{ needs.bump-version.outputs.version }}
     secrets: inherit
 
   deploy-prod:
     needs: [bump-version, deploy-test]
-    name: campaigns-prod
+    name: audience-prod
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
       deployments: write
     with:
       environment: prod
-      service: campaigns
+      service: audience
       image_tag: ${{ needs.bump-version.outputs.version }}
     secrets: inherit
