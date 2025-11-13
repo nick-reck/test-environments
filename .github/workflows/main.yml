@@ -20,10 +20,10 @@ jobs:
       - name: Version bump
         id: version_bump
         run: |
-          if previous_version=$(git describe --tags --abbrev=0 --match="${{ inputs.service }}/*"); then
+          if previous_version=$(git describe --tags --abbrev=0 --match="campaigns/*"); then
             version=$(./scripts/version.sh "$previous_version" "${{ github.event.head_commit.message }}")
           else
-            version="${{ inputs.service }}/0.0.1"
+            version="campaigns/0.0.1"
           fi
           git tag "$version"
           git push origin "$version"
