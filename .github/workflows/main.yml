@@ -8,6 +8,7 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
+      deployments: write
     with:
       environment: dev
       service: campaigns
@@ -20,6 +21,7 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
+      deployments: write
     with:
       environment: test
       service: campaigns
@@ -32,6 +34,7 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
+      deployments: write
     with:
       environment: prod
       service: campaigns
