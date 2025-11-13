@@ -4,33 +4,35 @@ on:
       - main
 jobs:
   deploy-dev:
-    name: audience-dev
+    name: campaigns-dev
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
     with:
       environment: dev
-      service: audience
+      image_tag: campaigns/0.1.7
     secrets: inherit
 
   deploy-test:
     needs: deploy-dev
-    name: audience-test
+    name: campaigns-test
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
     with:
       environment: test
-      service: audience
+      service: campaigns
+      image_tag: campaigns/0.1.7
     secrets: inherit
 
   deploy-prod:
     needs: deploy-test
-    name: audience-prod
+    name: campaigns-prod
     uses: ./.github/workflows/deploy.yaml
     permissions:
       actions: write
     with:
       environment: prod
-      service: audience
+      service: campaigns
+      image_tag: campaigns/0.1.7
     secrets: inherit
