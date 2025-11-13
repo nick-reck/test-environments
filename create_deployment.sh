@@ -24,14 +24,18 @@ update_deployment_status () {
     fi
 }
 
-deployment_id=$(gh api --method POST \
+if deployment_id=$(gh api --method POST \
     -H "Accept: application/vnd.github+json" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     /repos/$REPO/deployments \
     -f 'ref='$TAG \
     -f 'task='$SERVICE \
-    -f 'environment='$ENV | jq '.id')
-echo "Created deployment $deployment_id for $SERVICE with tag $TAG in $ENV"
+    -f 'environment='$ENV | jq '.id'); then
+    echo "Created deployment $deployment_id for $SERVICE with tag $TAG in $ENV"
+else
+    echo "Failed to create deployment for $SERVICE with tag $TAG in $ENV"
+    exit 1
+fi
 
 update_deployment_status $deployment_id "success"
 
