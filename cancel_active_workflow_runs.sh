@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#! /bin/bash
 
 ENV="$1"
 SERVICE="$2"

@@ -37,3 +37,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Deploying to ${{ inputs.environment }}..."
+
+      - name: Create deployment to ${{ inputs.environment }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./create_deployment.sh ${{ inputs.environment }} ${{ inputs.service }} ${{ inputs.image_tag }}
