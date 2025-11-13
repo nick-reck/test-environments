@@ -26,7 +26,7 @@ update_deployment_status () {
 
 check_and_update_deployment_status () {
     if [ $deployment_id -eq $1 ]; then
-        continue
+        return
     fi
 
     current_state=$(gh api -XGET \
