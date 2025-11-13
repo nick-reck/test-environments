@@ -24,6 +24,22 @@ update_deployment_status () {
     fi
 }
 
+check_and_update_deployment_status () {
+    if [ $deployment_id -eq $1 ]; then
+        continue
+    fi
+
+    current_state=$(gh api -XGET \
+        -H "Accept: application/vnd.github+json" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        /repos/$REPO/deployments/$1/statuses | jq -r '.[0].state')
+    if [[ "$current_state" != "inactive" ]]; then
+        update_deployment_status $1 "inactive"
+    else
+        echo "Deployment $1 is in state $current_state, not updating it."
+    fi
+}
+
 jq -n \
     --arg tag "$TAG" \
     --arg service "$SERVICE" \
@@ -45,7 +61,11 @@ previous_deployment_ids=$(gh api -XGET \
   -f 'task='$SERVICE \
   -f 'per_page=2' \
   -f 'environment='$ENV | jq '.[].id')
-previous_deployment_ids+=$(gh api -XGET \
+for previous_deployment_id in $previous_deployment_ids; do
+    check_and_update_deployment_status $previous_deployment_id
+done
+
+previous_deployment_ids=$(gh api -XGET \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   /repos/$REPO/deployments \
@@ -53,19 +73,7 @@ previous_deployment_ids+=$(gh api -XGET \
   -f 'per_page=5' \
   -f 'environment='$ENV | jq '.[].id')
 for previous_deployment_id in $previous_deployment_ids; do
-    if [ $deployment_id -eq $previous_deployment_id ]; then
-        continue
-    fi
-
-    current_state=$(gh api -XGET \
-        -H "Accept: application/vnd.github+json" \
-        -H "X-GitHub-Api-Version: 2022-11-28" \
-        /repos/$REPO/deployments/$previous_deployment_id/statuses | jq -r '.[0].state')
-    if [[ "$current_state" != "inactive" ]]; then
-        update_deployment_status $previous_deployment_id "inactive"
-    else
-        echo "Deployment $previous_deployment_id is in state $current_state, not updating it."
-    fi
+    check_and_update_deployment_status $previous_deployment_id
 done
 
 rm payload.json
