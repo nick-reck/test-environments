@@ -45,7 +45,7 @@ jobs:
     secrets: inherit
 
   deploy-test:
-    needs: deploy-dev
+    needs: [bump-version, deploy-dev]
     name: campaigns-test
     uses: ./.github/workflows/deploy.yaml
     permissions:
@@ -58,7 +58,7 @@ jobs:
     secrets: inherit
 
   deploy-prod:
-    needs: deploy-test
+    needs: [bump-version, deploy-test]
     name: campaigns-prod
     uses: ./.github/workflows/deploy.yaml
     permissions:

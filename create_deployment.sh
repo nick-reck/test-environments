@@ -33,7 +33,7 @@ check_and_update_deployment_status () {
         -H "Accept: application/vnd.github+json" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         /repos/$REPO/deployments/$1/statuses | jq -r '.[0].state')
-    if [[ "$current_state" != "inactive" ]]; then
+    if [[ "$current_state" == "success" ]]; then
         update_deployment_status $1 "inactive"
     else
         echo "Deployment $1 is in state $current_state, not updating it."
