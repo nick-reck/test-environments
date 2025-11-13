@@ -23,13 +23,17 @@ update_deployment_status () {
         exit 1
     fi
 }
+
+jq -n \
+    --arg tag "$TAG" \
+    --arg service "$SERVICE" \
+    --arg env "$ENV" \
+    '{ "ref": $tag, "task": $service, "environment": $env, "required_contexts": [] }' > payload.json
 deployment_id=$(gh api --method POST \
     -H "Accept: application/vnd.github+json" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     /repos/$REPO/deployments \
-    -f 'ref='$TAG \
-    -f 'task='$SERVICE \
-    -f 'environment='$ENV | jq -r '.id')
+    --input payload.json | jq -r '.id')
 if [ -z "$deployment_id" ]; then
     echo "Created deployment $deployment_id for $SERVICE with tag $TAG in $ENV"
 else
@@ -61,3 +65,5 @@ for previous_deployment_id in $previous_deployment_ids; do
         echo "Deployment $previous_deployment_id is in state $current_state, not updating it."
     fi
 done
+
+rm payload.json
