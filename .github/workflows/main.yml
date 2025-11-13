@@ -10,6 +10,7 @@ jobs:
       actions: write
     with:
       environment: dev
+      service: campaigns
       image_tag: campaigns/0.1.7
     secrets: inherit
 
