@@ -21,7 +21,7 @@ env:
 
 jobs:
   deploy:
-    environment: ${{ inputs.environment }}
+    environment: approval-gate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout latest
