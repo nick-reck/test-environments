@@ -10,6 +10,8 @@ jobs:
       DOCKER_REGISTRY: cfa-docker-customer.jfrog.io
     outputs:
       version: ${{ steps.version_bump.outputs.version }}
+    permissions:
+      contents: write
     steps:
       - name: Checkout latest
         uses: actions/checkout@v4
