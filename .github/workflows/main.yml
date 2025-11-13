@@ -3,7 +3,34 @@ on:
     branches:
       - main
 jobs:
+  bump-version:
+    name: Increment version number
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_REGISTRY: cfa-docker-customer.jfrog.io
+    outputs:
+      version: ${{ steps.version_bump.outputs.version }}
+    steps:
+      - name: Checkout latest
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CFA_GITHUB_ACTIONS_ACCESS_TOKEN }}
+
+      - name: Version bump
+        id: version_bump
+        run: |
+          if previous_version=$(git describe --tags --abbrev=0 --match="${{ inputs.service }}/*"); then
+            version=$(./scripts/version.sh "$previous_version" "${{ github.event.head_commit.message }}")
+          else
+            version="${{ inputs.service }}/0.0.1"
+          fi
+          git tag "$version"
+          git push origin "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
   deploy-dev:
+    needs: bump-version
     name: campaigns-dev
     uses: ./.github/workflows/deploy.yaml
     permissions:
@@ -12,7 +39,7 @@ jobs:
     with:
       environment: dev
       service: campaigns
-      image_tag: campaigns/0.1.7
+      image_tag: ${{ needs.bump-version.outputs.version }}
     secrets: inherit
 
   deploy-test:
@@ -25,7 +52,7 @@ jobs:
     with:
       environment: test
       service: campaigns
-      image_tag: campaigns/0.1.7
+      image_tag: ${{ needs.bump-version.outputs.version }}
     secrets: inherit
 
   deploy-prod:
@@ -38,5 +65,5 @@ jobs:
     with:
       environment: prod
       service: campaigns
-      image_tag: campaigns/0.1.7
+      image_tag: ${{ needs.bump-version.outputs.version }}
     secrets: inherit
