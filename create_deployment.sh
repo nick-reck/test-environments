@@ -43,6 +43,13 @@ previous_deployment_ids=$(gh api -XGET \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   /repos/$REPO/deployments \
   -f 'task='$SERVICE \
+  -f 'per_page=2' \
+  -f 'environment='$ENV | jq '.[].id')
+previous_deployment_ids+=$(gh api -XGET \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  /repos/$REPO/deployments \
+  -f 'task=deploy' \
   -f 'per_page=5' \
   -f 'environment='$ENV | jq '.[].id')
 for previous_deployment_id in $previous_deployment_ids; do
