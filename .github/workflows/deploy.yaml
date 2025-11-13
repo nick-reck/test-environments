@@ -41,6 +41,9 @@ jobs:
         run: |
           echo "Deploying to ${{ inputs.environment }}..."
 
+  create:
+    runs-on: ubuntu-latest
+    steps:
       - name: Create deployment to ${{ inputs.environment }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
