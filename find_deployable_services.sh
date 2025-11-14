@@ -68,6 +68,8 @@ for i in "${!deployable_services[@]}"; do
 done
 
 json_string="$(echo "$json_array" | jq -Rs .)"
-echo "${json_string//\\n/}"
+str=${json_string//\\n/}
+st=${str#\"}
+echo ${st%\"}
 
 # echo "$(jq -c -n '$ARGS.positional' --args "${deployable_services[@]}")"
