@@ -3,7 +3,10 @@ on:
     inputs:
       environment:
         description: Environment to promote services to
-        type: string
+        type: choice
+        options:
+          - test
+          - prod
         required: true
     
 jobs:
@@ -19,7 +22,7 @@ jobs:
     needs: approval-gate
     runs-on: ubuntu-latest
     outputs:
-      deployable_services: ${{ steps.deployable_services.outputs.deployable_services }}
+      deployable_services: ${{ steps.deployable_services.outputs.deploy_matrix }}
     steps:
       - name: Checkout latest
         uses: actions/checkout@v4
