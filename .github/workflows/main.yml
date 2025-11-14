@@ -31,13 +31,13 @@ jobs:
           git push origin "$version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-  dev-gate:
-    name: Approval gate for the dev environment
-    runs-on: ubuntu-latest
-    needs: bump-version
-    environment: approval-gate
-    steps:
-      - run: echo "Approved for prod"
+  # dev-gate:
+  #   name: Approval gate for the dev environment
+  #   runs-on: ubuntu-latest
+  #   needs: bump-version
+  #   environment: approval-gate
+  #   steps:
+  #     - run: echo "Approved for prod"
 
   deploy-dev:
     needs: [bump-version, dev-gate]
@@ -58,7 +58,7 @@ jobs:
     needs: [bump-version, deploy-dev]
     environment: approval-gate
     steps:
-      - run: echo "Approved for prod"
+      - run: echo "Approved for test"
 
   deploy-test:
     needs: [bump-version, test-gate]
@@ -82,7 +82,7 @@ jobs:
       - run: echo "Approved for prod"
 
   deploy-prod:
-    needs: [bump-version, deploy-test]
+    needs: [bump-version, prod-gate]
     name: campaigns-prod
     uses: ./.github/workflows/deploy.yaml
     permissions:
