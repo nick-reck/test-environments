@@ -31,7 +31,7 @@ current_run_created_at=$(gh run view $CURRENT_RUN_ID \
   -q '.createdAt')
 # current_run_created_at_timestamp=$(date -juf "%Y-%m-%dT%H:%M:%SZ" "$current_run_created_at" +%s)
 current_run_created_at_timestamp=$(date -d "$current_run_created_at" +"%s")
-job_name_to_cancel="$SERVICE-$ENV"
+job_name_to_cancel="$SERVICE $ENV"
 for run_id in $run_ids; do
   pending_run_created_at=$(gh run view $run_id \
     --json createdAt \
@@ -56,7 +56,7 @@ for run_id in $run_ids; do
     continue
   fi
 
-  pending_job_name="${pending_job_name% / deploy}"
+  pending_job_name="${pending_job_name#Approval gate | }"
   if [[ $pending_job_name == $job_name_to_cancel ]]; then
     if gh run cancel $run_id; then
         echo "Cancelled workflow with run id $run_id"
