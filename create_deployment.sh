@@ -44,7 +44,7 @@ jq -n \
     --arg tag "$TAG" \
     --arg service "$SERVICE" \
     --arg env "$ENV" \
-    '{ "ref": $tag, "task": $service, "environment": $env, "required_contexts": [] }' > payload.json
+    '{ "ref": $tag, "task": $service, "environment": $env, "required_contexts": [], "auto_merge": false }' > payload.json
 deployment_id=$(gh api --method POST \
     -H "Accept: application/vnd.github+json" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
