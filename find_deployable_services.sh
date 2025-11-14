@@ -19,6 +19,7 @@ esac
 
 services=("campaigns" "audience")
 deployable_services=()
+deployable_tags=()
 for service in "${services[@]}"; do
     from_env_deployment_id=$(gh api -XGET \
         -H "Accept: application/vnd.github+json" \
@@ -40,7 +41,8 @@ for service in "${services[@]}"; do
         -f 'per_page=1' \
         -f 'environment='$ENV | jq '.[].id')
     if [[ -z "$to_env_deployment_id" ]]; then
-        deployable_services+=("$from_tag")
+        deployable_tags+=("$from_tag")
+        deployable_services+=("$service")
         continue
     fi
     to_tag=$(gh api \
@@ -49,8 +51,21 @@ for service in "${services[@]}"; do
         /repos/$REPO/deployments/$to_env_deployment_id \
         | jq -r '.ref')
     if [[ "$from_tag" != "$to_tag" ]]; then
-        deployable_services+=("$from_tag")
+        deployable_tags+=("$from_tag")
+        deployable_services+=("$service")
         continue
     fi
 done
-echo "$(jq -c -n '$ARGS.positional' --args "${deployable_services[@]}")"
+
+json_array="[]"
+
+for i in "${!deployable_services[@]}"; do
+  service="${deployable_services[i]}"
+  tag="${deployable_tags[i]}"
+  
+  json_object=$(jq -n --arg service "$services" --arg tag "$tag" '{"service": $service, "tag": $tag}')
+  json_array=$(echo "$json_array" | jq --argjson obj "$json_object" '. + [$obj]')
+done
+
+echo "$json_array"
+# echo "$(jq -c -n '$ARGS.positional' --args "${deployable_services[@]}")"

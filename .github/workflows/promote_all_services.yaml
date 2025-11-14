@@ -37,12 +37,11 @@ jobs:
         run: |
           deployable_services=$(./find_deployable_services.sh ${{ inputs.environment }})
           echo "$deployable_services"
-          echo "deploy_matrix=$deployable_services" >> $GITHUB_OUTPUT
+          echo "deploy_matrix={\"include\":$deployable_services}" >> $GITHUB_OUTPUT
 
   deploy:
     strategy:
-      matrix:
-        version: ${{ needs.detect.outputs.deployable_services }}
+      matrix: ${{ needs.detect.outputs.deployable_services }}
     needs: detect
     name: Deploying ALL services to ${{ inputs.environment }}
     uses: ./.github/workflows/deploy.yaml
@@ -51,6 +50,6 @@ jobs:
       deployments: write
     with:
       environment: ${{ inputs.environment }}
-      service: campaigns
-      image_tag: ${{ needs.bump-version.outputs.version }}
+      service: ${{ matrix.service }}
+      image_tag: ${{ matrix.tag }}
     secrets: inherit
