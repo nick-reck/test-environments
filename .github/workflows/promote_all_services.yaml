@@ -42,7 +42,7 @@ jobs:
   deploy:
     strategy:
       matrix:
-        include: ${{ fromJSON(needs.detect.outputs.deployable_services)}}
+        version: ${{ needs.detect.outputs.deployable_services }}
     needs: detect
     name: Deploying ALL services to ${{ inputs.environment }}
     uses: ./.github/workflows/deploy.yaml
