@@ -21,7 +21,6 @@ env:
 
 jobs:
   deploy:
-    environment: approval-gate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout latest
@@ -40,16 +39,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Deploying version ${{ inputs.image_tag }} to ${{ inputs.environment }}..."
-
-  create:
-    needs: deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout latest
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create deployment to ${{ inputs.environment }}
         env:

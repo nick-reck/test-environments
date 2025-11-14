@@ -31,8 +31,16 @@ jobs:
           git push origin "$version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-  deploy-dev:
+  dev-gate:
+    name: Approval gate for the dev environment
+    runs-on: ubuntu-latest
     needs: bump-version
+    environment: approval-gate
+    steps:
+      - run: echo "Approved for prod"
+
+  deploy-dev:
+    needs: [bump-version, dev-gate]
     name: campaigns-dev
     uses: ./.github/workflows/deploy.yaml
     permissions:
@@ -44,8 +52,16 @@ jobs:
       image_tag: ${{ needs.bump-version.outputs.version }}
     secrets: inherit
 
-  deploy-test:
+  test-gate:
+    name: Approval gate for the test environment
+    runs-on: ubuntu-latest
     needs: [bump-version, deploy-dev]
+    environment: approval-gate
+    steps:
+      - run: echo "Approved for prod"
+
+  deploy-test:
+    needs: [bump-version, test-gate]
     name: campaigns-test
     uses: ./.github/workflows/deploy.yaml
     permissions:
@@ -56,6 +72,14 @@ jobs:
       service: campaigns
       image_tag: ${{ needs.bump-version.outputs.version }}
     secrets: inherit
+
+  prod-gate:
+    name: Approval gate for the prod environment
+    runs-on: ubuntu-latest
+    needs: [bump-version, deploy-test]
+    environment: approval-gate
+    steps:
+      - run: echo "Approved for prod"
 
   deploy-prod:
     needs: [bump-version, deploy-test]
