@@ -63,7 +63,8 @@ for i in "${!deployable_services[@]}"; do
   service="${deployable_services[i]}"
   tag="${deployable_tags[i]}"
   
-  json_object=$(jq -n --arg service "$services" --arg tag "$tag" '{"service": $service, "tag": $tag}')
+  echo "$service"
+  json_object=$(jq -n --arg service "$service" --arg tag "$tag" '{"service": $service, "tag": $tag}')
   json_array=$(echo "$json_array" | jq --argjson obj "$json_object" '. + [$obj]')
 done
 
