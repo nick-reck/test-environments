@@ -40,7 +40,7 @@ jobs:
   #     - run: echo "Approved for prod"
 
   deploy-dev:
-    needs: [bump-version, dev-gate]
+    needs: [bump-version]
     name: campaigns-dev
     uses: ./.github/workflows/deploy.yaml
     permissions:
