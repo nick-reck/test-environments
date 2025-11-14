@@ -70,6 +70,6 @@ done
 json_string="$(echo "$json_array" | jq -Rs .)"
 str=${json_string//\\n/}
 st=${str#\"}
-echo ${st%\"} | sed 's/ //g'
+echo ${st%\"} | sed 's/ //g' | sed 's/\\//g'
 
 # echo "$(jq -c -n '$ARGS.positional' --args "${deployable_services[@]}")"
