@@ -33,6 +33,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           deployable_services=$(./find_deployable_services.sh ${{ inputs.environment }})
+          echo "$deployable_services"
           echo "deploy_matrix=$deployable_services" >> $GITHUB_OUTPUT
 
   deploy:
