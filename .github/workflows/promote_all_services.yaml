@@ -1,0 +1,52 @@
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to promote services to
+        type: string
+        required: true
+    
+jobs:
+  approval-gate:
+    name: "Approval gate | ALL SERVICES ${{ inputs.environment }}"
+    runs-on: ubuntu-latest
+    environment: approval-gate
+    steps:
+      - run: echo "Approved for ${{ inputs.environment }}"
+
+  detect:
+    name: Detect deployable services
+    needs: approval-gate
+    runs-on: ubuntu-latest
+    outputs:
+      deployable_services: ${{ steps.deployable_services.outputs.deployable_services }}
+    steps:
+      - name: Checkout latest
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Running script
+        id: deployable_services
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          deployable_services=$(./find_deployable_services.sh ${{ inputs.environment }})
+          echo "deploy_matrix=$deployable_services" >> $GITHUB_OUTPUT
+
+  deploy:
+    strategy:
+      matrix:
+        include: ${{ fromJSON(needs.detect.outputs.deployable_services)}}
+    needs: detect
+    name: Deploying ALL services to ${{ inputs.environment }}
+    uses: ./.github/workflows/deploy.yaml
+    permissions:
+      actions: write
+      deployments: write
+    with:
+      environment: ${{ inputs.environment }}
+      service: campaigns
+      image_tag: ${{ needs.bump-version.outputs.version }}
+    secrets: inherit
